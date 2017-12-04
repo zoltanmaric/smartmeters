@@ -7,6 +7,8 @@ import play.api.libs.ws.WSClient
 
 import scala.concurrent.Future
 
+import sonnen.model.Reading
+
 @Singleton
 class NetMeter @Inject()(wSClient: WSClient) {
 
@@ -27,5 +29,3 @@ trait NoResult
 case object NoResult extends NoResult {
   val future: Future[NoResult] = Future.successful(NoResult)
 }
-
-case class Reading(netEnergyMilliWattHours: BigInt, timestamp: Instant)

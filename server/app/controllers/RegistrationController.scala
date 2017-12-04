@@ -1,6 +1,6 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json.{Json, OFormat}
@@ -11,6 +11,7 @@ import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class RegistrationController @Inject()(
                                         protected val dbConfigProvider: DatabaseConfigProvider,
                                         cc: ControllerComponents

@@ -3,6 +3,8 @@ package services.client
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicLong
 
+import sonnen.model.Reading
+
 import scala.util.Random
 
 class ReadingSimulator {
@@ -21,5 +23,3 @@ class ReadingSimulator {
 
   private def getRandomDelta: Long = (Random.nextGaussian() * DELTA_RANGE).toLong
 }
-
-case class Reading(inWh: Long, outWh: Long, timestamp: Instant)

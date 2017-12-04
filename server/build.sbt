@@ -1,7 +1,3 @@
-name := "server"
-      
-lazy val `server` = (project in file(".")).enablePlugins(PlayScala)
-
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
       
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"

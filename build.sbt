@@ -4,9 +4,16 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.12.4"
 )
 
+lazy val common = project.settings(commonSettings)
 
-lazy val server = project.settings(commonSettings)
+lazy val server = project.dependsOn(common)
+  .settings(commonSettings)
+  .enablePlugins(PlayScala)
+
+
+lazy val clients = project.settings(commonSettings)
+  .dependsOn(common)
 
 lazy val root = (project in file("."))
   .settings(commonSettings)
-  .aggregate(server)
+  .aggregate(server, clients, common)
