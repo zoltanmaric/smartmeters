@@ -1,8 +1,8 @@
-name := "sonnen"
+name := "server"
  
 version := "1.0" 
       
-lazy val `sonnen` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `server` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
       
