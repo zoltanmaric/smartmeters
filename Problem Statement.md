@@ -23,12 +23,11 @@ simplification for the purposes of this proof-of-concept
   * In reality, the process of registration would consist of
   purchasing a subscription e.g. via a credit card and eventually
   having a smart meter installed containing the private key
-  * This implementation short-circuits this process: the user
-  merely `POST`s their name and billing address, and receives
-  a private key (representing the private key in the meter) as a
-  response
+  * This implementation short-circuits this process: an operator
+  registers a user by `POST`ing their username and the public key
+  of their smart meter
   * After registering, the public key of the generated key pair
-  for this user is stored with the user's billing information,
+  for this user is stored with the username on the server,
   thus constituting a whitelist of addresses that can report
   readings
 

@@ -29,6 +29,7 @@ class RegistrationController @Inject()(
   val users = TableQuery[Users]
 
 
+  // TODO: restrict access
   def register(username: String, publicKey: String): Action[AnyContent] = Action.async {
     dbConfig.db.run(users += (0, username, publicKey))
       .map(_ => Created)
