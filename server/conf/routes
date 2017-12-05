@@ -15,4 +15,6 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 POST    /register                   controllers.RegistrationController.register(username, publicKey)
 
+POST    /reportReading              controllers.ReadingController.reportReading()
+
       
