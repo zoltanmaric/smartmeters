@@ -3,8 +3,10 @@ package sonnen.clients
 import java.security.KeyPair
 import java.util.Base64
 
-import play.api.libs.ws.StandaloneWSClient
+import akka.stream.Materializer
 import play.api.libs.ws.DefaultBodyWritables._
+import play.api.libs.ws.{EmptyBody, StandaloneWSClient}
+import sonnen.model.NoResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -23,7 +25,7 @@ class SimulationController(wsClient: StandaloneWSClient) {
       println(s"Registering user $i: $username with key $base64PublicKey")
 
       wsClient.url(url)
-        .post("")
+        .post(EmptyBody)
         .map { res =>
           if (res.status >= 400) {
             throw new RuntimeException(s"Got response ${res.status}: ${res.body} while posting to $url")
@@ -34,10 +36,15 @@ class SimulationController(wsClient: StandaloneWSClient) {
         }
     }
 
+  def generateReadings(usersWithKeys: Seq[UserWithKey])(implicit mat: Materializer): Future[NoResult] =
+    Future.traverse(usersWithKeys) { userWithKey =>
+      new NetMeter(userWithKey, wsClient).startReporting()
+    }.map(_ => NoResult)
+
   private def generateKeyPair(): KeyPair = {
     import java.security.KeyPairGenerator
     val kpg = KeyPairGenerator.getInstance("RSA")
-    kpg.initialize(2048)
+    kpg.initialize(1024)
     kpg.genKeyPair()
   }
 

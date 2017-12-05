@@ -26,8 +26,11 @@ object Main {
 
     val controller = new SimulationController(wsClient)
 
-    Await.result(controller.register100Users()
+    val simulation = controller.register100Users().flatMap(controller.generateReadings)
+
+    Await.result(simulation
       .andThen { case _ => wsClient.close() }
+      .andThen { case _ => materializer.shutdown() }
       .andThen { case _ => system.terminate() }, Duration.Inf)
 
     println("done")

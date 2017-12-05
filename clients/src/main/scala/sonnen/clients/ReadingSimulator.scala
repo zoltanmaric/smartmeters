@@ -18,7 +18,7 @@ class ReadingSimulator {
     val deltaInWh = getRandomDelta
     val deltaOutWh = getRandomDelta
 
-    Reading(inWh.addAndGet(deltaInWh), outWh.addAndGet(deltaOutWh), Instant.now())
+    Reading(inWh.addAndGet(deltaInWh), outWh.addAndGet(deltaOutWh), Instant.now().toEpochMilli)
   }
 
   private def getRandomDelta: Long = (Random.nextGaussian() * DELTA_RANGE).toLong
