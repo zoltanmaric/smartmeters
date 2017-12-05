@@ -2,14 +2,15 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import slick.jdbc.JdbcProfile
-import slick.lifted.Tag
 import slick.jdbc.PostgresProfile.api._
+import slick.lifted.Tag
 
 import scala.concurrent.ExecutionContext
+import scala.util.Success
 
 @Singleton
 class RegistrationController @Inject()(
@@ -32,13 +33,16 @@ class RegistrationController @Inject()(
 
   // TODO: restrict access
   def register(username: String, publicKey: String): Action[AnyContent] = Action.async {
-    dbConfig.db.run(users += (0, username, publicKey))
+    val res = dbConfig.db.run(users += (0, username, publicKey))
       .map(_ => Created)
+
+    res.onComplete {
+      case Success(_) =>
+        Logger.info(s"Successfully registered $username with key $publicKey")
+      case _ =>
+        ()
+    }
+
+    res
   }
-}
-
-case class KeyPair(secret: String, public: String)
-
-object KeyPair {
-  implicit val fmt: OFormat[KeyPair] = Json.format[KeyPair]
 }

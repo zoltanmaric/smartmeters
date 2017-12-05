@@ -1,4 +1,4 @@
-package services.client
+package sonnen.clients
 
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicLong
