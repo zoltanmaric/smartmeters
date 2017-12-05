@@ -1,14 +1,12 @@
 package sonnen.clients
 
-import java.nio.ByteBuffer
-import java.util.Base64
-
 import akka.stream.Materializer
 import akka.stream.scaladsl.{Sink, Source}
 import play.api.libs.json.Json
-import play.api.libs.ws.StandaloneWSClient
-import sonnen.model.{NoResult, Reading, SignedReading}
 import play.api.libs.ws.JsonBodyWritables._
+import play.api.libs.ws.StandaloneWSClient
+import sonnen.model.{NoResult, SignedReading}
+import sonnen.utils.Signer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -22,7 +20,7 @@ class NetMeter(userWithKey: UserWithKey, wSClient: StandaloneWSClient)(implicit 
     val readingSimulator = new ReadingSimulator()
     Source.tick(Random.nextInt(5000).millis, 5.seconds, Unit)
       .map(_ => readingSimulator.getReading)
-      .map(Signer.sign(_, userWithKey))
+      .map(Signer.sign(_, userWithKey.keyPair))
       .mapAsync(1)(reportReading)
       .runWith(Sink.ignore)
       .map(_ => NoResult)
@@ -42,31 +40,3 @@ class NetMeter(userWithKey: UserWithKey, wSClient: StandaloneWSClient)(implicit 
   }
 }
 
-object Signer {
-  private val inWhLength = 8
-  private val outWhLength = 8
-  private val timestampLength = 8
-
-  private val totalLength = inWhLength + outWhLength + timestampLength
-
-  def sign(reading: Reading, userWithKey: UserWithKey): SignedReading = {
-    val dataToSign = toByteArray(reading)
-
-    import java.security.Signature
-    val sig: Signature = Signature.getInstance("SHA256withRSA")
-    sig.initSign(userWithKey.keyPair.getPrivate)
-    sig.update(dataToSign)
-    val base64Signature = Base64.getEncoder.encodeToString(sig.sign())
-    val base64PublicKey = Base64.getEncoder.encodeToString(userWithKey.keyPair.getPublic.getEncoded)
-
-    SignedReading(base64PublicKey, base64Signature, reading)
-  }
-
-  private def toByteArray(reading: Reading): Array[Byte] = {
-    val bb = ByteBuffer.allocate(totalLength)
-    bb.putLong(reading.inWh)
-    bb.putLong(reading.outWh)
-    bb.putLong(reading.timestamp)
-    bb.array()
-  }
-}
