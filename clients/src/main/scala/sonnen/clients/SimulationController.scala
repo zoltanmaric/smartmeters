@@ -17,7 +17,7 @@ class SimulationController(wsClient: StandaloneWSClient) {
 
       val username = Random.alphanumeric.take(10).mkString
       val keyPair = generateKeyPair()
-      val base64PublicKey = Base64.getEncoder.encode(keyPair.getPublic.getEncoded)
+      val base64PublicKey = Base64.getEncoder.encodeToString(keyPair.getPublic.getEncoded)
       val url = s"http://localhost:9000/register?username=$username&publicKey=$base64PublicKey"
 
       println(s"Registering user $i: $username with key $base64PublicKey")
