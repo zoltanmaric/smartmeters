@@ -21,5 +21,5 @@ class ReadingSimulator {
     Reading(inWh.addAndGet(deltaInWh), outWh.addAndGet(deltaOutWh), Instant.now().toEpochMilli)
   }
 
-  private def getRandomDelta: Long = (Random.nextGaussian() * DELTA_RANGE).toLong
+  private def getRandomDelta: Long = (((Random.nextGaussian() + 1) / 2) * DELTA_RANGE).toLong
 }
