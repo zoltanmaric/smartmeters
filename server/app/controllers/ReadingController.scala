@@ -7,6 +7,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import slick.jdbc.JdbcProfile
 import sonnen.model.SignedReading
+import sonnen.utils.Signer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -21,7 +22,11 @@ class ReadingController @Inject()(
     val reading = request.body
 
     Logger.info(s"Received signed reading: $reading")
-    Future.successful(Ok)
+
+    if (Signer.verifySignature(reading))
+      Future.successful(Ok)
+    else
+      Future.successful(Forbidden(s"Invalid signature received in $reading"))
   }
 
 }

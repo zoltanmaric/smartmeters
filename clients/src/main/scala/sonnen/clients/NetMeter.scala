@@ -19,6 +19,7 @@ class NetMeter(userWithKey: UserWithKey, wSClient: StandaloneWSClient)(implicit 
   def startReporting(): Future[NoResult] = {
     val readingSimulator = new ReadingSimulator()
     Source.tick(Random.nextInt(5000).millis, 5.seconds, Unit)
+      .take(6)
       .map(_ => readingSimulator.getReading)
       .map(Signer.sign(_, userWithKey.keyPair))
       .mapAsync(1)(reportReading)
