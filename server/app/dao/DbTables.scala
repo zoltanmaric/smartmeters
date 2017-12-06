@@ -1,5 +1,6 @@
 package dao
 
+import java.sql.Timestamp
 import javax.inject.{Inject, Singleton}
 
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -22,5 +23,18 @@ class DbTables @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   }
 
   val users = TableQuery[Users]
+
+  class Readings(tag: Tag) extends Table[(Long, Long, Long, Timestamp, String, Long)](tag, "users") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc) // This is the primary key column
+    def inWh = column[Long]("in_wh")
+    def outWh = column[Long]("out_wh")
+    def readTime = column[Timestamp]("read_time")
+    def signature = column[String]("signature")
+    def userId = column[Long]("user_id")
+    // Every table needs a * projection with the same type as the table's type parameter
+    def * = (id, inWh, outWh, readTime, signature, userId)
+  }
+
+  val readings = TableQuery[Readings]
 
 }

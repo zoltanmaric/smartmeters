@@ -3,7 +3,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import dao.Dao
-import sonnen.model.SignedReading
+import sonnen.model.{NoResult, SignedReading}
 import sonnen.utils.Signer
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,6 +22,9 @@ class ReadingService @Inject()(dao: Dao) {
       }
     else
       Future.successful(InvalidSignature)
+
+  def storeReading(signedReading: SignedReading): Future[NoResult] =
+    dao.storeReading(signedReading)
 }
 
 sealed trait VerificationResult

@@ -6,7 +6,6 @@ import play.api.Logger
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import services.{InvalidSignature, ReadingService, UnknownPublicKey, VerificationSuccess}
 import sonnen.model.SignedReading
-import sonnen.utils.Signer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -22,19 +21,14 @@ class ReadingController @Inject()(
 
     Logger.info(s"Received signed reading: $reading")
 
-    readingService.verifyReading(reading).map {
+    readingService.verifyReading(reading).flatMap {
       case VerificationSuccess =>
-        Ok
+        readingService.storeReading(reading).map(_ => Ok)
       case UnknownPublicKey =>
-        Forbidden(s"Unknown public key in $reading")
+        Future.successful(Forbidden(s"Unknown public key ${reading.base64PublicKey} in $reading"))
       case InvalidSignature =>
-        BadRequest(s"Invalid signature in $reading")
+        Future.successful(BadRequest(s"Invalid signature in $reading"))
     }
-
-    if (Signer.verifySignature(reading))
-      Future.successful(Ok)
-    else
-      Future.successful(Forbidden(s"Invalid signature received in $reading"))
   }
 
 }
