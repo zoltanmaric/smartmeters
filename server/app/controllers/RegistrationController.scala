@@ -4,7 +4,8 @@ import javax.inject.{Inject, Singleton}
 
 import dao.Dao
 import play.api.Logger
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, ControllerComponents}
+import sonnen.model.Registration
 
 import scala.concurrent.ExecutionContext
 import scala.util.Success
@@ -17,7 +18,8 @@ class RegistrationController @Inject()(
   extends AbstractController(cc) {
 
   // TODO: restrict access
-  def register(username: String, publicKey: String): Action[AnyContent] = Action.async {
+  def register(): Action[Registration] = Action.async(parse.json[Registration]) { request =>
+    val Registration(username, publicKey) = request.body
     val res = dao.register(username, publicKey)
       .map(_ => Created)
 

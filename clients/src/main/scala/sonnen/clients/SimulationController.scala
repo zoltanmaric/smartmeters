@@ -4,9 +4,10 @@ import java.security.KeyPair
 import java.util.Base64
 
 import akka.stream.Materializer
-import play.api.libs.ws.DefaultBodyWritables._
-import play.api.libs.ws.{EmptyBody, StandaloneWSClient}
-import sonnen.model.NoResult
+import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables._
+import play.api.libs.ws.StandaloneWSClient
+import sonnen.model.{NoResult, Registration}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -20,12 +21,13 @@ class SimulationController(wsClient: StandaloneWSClient) {
       val username = Random.alphanumeric.take(10).mkString
       val keyPair = generateKeyPair()
       val base64PublicKey = Base64.getEncoder.encodeToString(keyPair.getPublic.getEncoded)
-      val url = s"http://localhost:9000/register?username=$username&publicKey=$base64PublicKey"
+      val url = s"http://localhost:9000/register"
+      val registration = Registration(username, base64PublicKey)
 
-      println(s"Registering user $i: $username with key $base64PublicKey")
+      println(s"Registering user $i: $registration")
 
       wsClient.url(url)
-        .post(EmptyBody)
+        .post(Json.toJson(registration))
         .map { res =>
           if (res.status >= 400) {
             throw new RuntimeException(s"Got response ${res.status}: ${res.body} while posting to $url")
