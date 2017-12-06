@@ -20,6 +20,8 @@ class Dao @Inject()(dbTables: DbTables, protected val dbConfigProvider: Database
     dbConfig.db.run(users += (0, username, publicKey))
       .map(_ => NoResult)
 
-  def publicKeyExists(base64PublicKey: String): Future[Boolean] = ???
+  def publicKeyExists(base64PublicKey: String): Future[Boolean] =
+    dbConfig.db.run(users.filter(_.publicKey === base64PublicKey).result)
+      .map(_.nonEmpty)
 
 }
