@@ -26,7 +26,7 @@ object Main {
 
     val controller = new SimulationController(wsClient)
 
-    val simulation = controller.register100Users().flatMap(controller.generateReadings)
+    val simulation = controller.registerUsers(500).flatMap(controller.generateReadings)
 
     Await.result(simulation
       .andThen { case _ => wsClient.close() }

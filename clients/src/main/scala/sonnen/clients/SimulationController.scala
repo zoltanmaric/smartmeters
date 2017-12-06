@@ -15,8 +15,8 @@ import scala.util.Random
 
 class SimulationController(wsClient: StandaloneWSClient) {
 
-  def register100Users(): Future[Seq[UserWithKey]] =
-    Future.traverse(1 to 100) { i =>
+  def registerUsers(numUsers: Int): Future[Seq[UserWithKey]] =
+    Future.traverse(1 to numUsers) { i =>
 
       val username = Random.alphanumeric.take(10).mkString
       val keyPair = generateKeyPair()
