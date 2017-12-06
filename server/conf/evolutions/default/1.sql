@@ -6,6 +6,16 @@ CREATE TABLE users (
 	public_key VARCHAR(1024) UNIQUE
 );
 
+CREATE TABLE readings (
+  id SERIAL PRIMARY KEY,
+  in_wh INTEGER NOT NULL,
+  out_wh INTEGER NOT NULL,
+  read_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  signature VARCHAR(1024) NOT NULL,
+  user_id INTEGER REFERENCES users ON DELETE CASCADE
+);
+
 # --- !Downs
 
+DROP TABLE readings;
 DROP TABLE users;
