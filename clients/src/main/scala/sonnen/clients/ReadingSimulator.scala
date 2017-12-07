@@ -7,7 +7,7 @@ import sonnen.model.Reading
 
 import scala.util.Random
 
-class ReadingSimulator {
+class ReadingSimulator() {
 
   private val DELTA_RANGE: Int = 5
 

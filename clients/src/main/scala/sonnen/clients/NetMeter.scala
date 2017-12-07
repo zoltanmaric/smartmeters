@@ -16,10 +16,10 @@ import scala.util.Random
 
 class NetMeter(userWithKey: UserWithKey, wSClient: StandaloneWSClient)(implicit mat: Materializer) {
 
-  def startReporting(): Future[NoResult] = {
+  def startReporting(readingInterval: FiniteDuration, numReadings: Int): Future[NoResult] = {
     val readingSimulator = new ReadingSimulator()
-    Source.tick(Random.nextInt(5000).millis, 5.seconds, Unit)
-      .take(6)
+    Source.tick(Random.nextInt(5000).millis, readingInterval, Unit)
+      .take(numReadings)
       .map(_ => readingSimulator.getReading)
       .map(Signer.sign(_, userWithKey.keyPair))
       .mapAsync(1)(reportReading)

@@ -7,10 +7,12 @@ import akka.stream.Materializer
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables._
 import play.api.libs.ws.StandaloneWSClient
+import play.shaded.ahc.io.netty.handler.codec.http.HttpResponseStatus
 import sonnen.model.{NoResult, Registration}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
 class SimulationController(wsClient: StandaloneWSClient) {
@@ -29,7 +31,7 @@ class SimulationController(wsClient: StandaloneWSClient) {
       wsClient.url(url)
         .post(Json.toJson(registration))
         .map { res =>
-          if (res.status >= 400) {
+          if (res.status >= HttpResponseStatus.BAD_REQUEST.code) {
             throw new RuntimeException(s"Got response ${res.status}: ${res.body} while posting to $url")
           } else {
             println(s"Successfully registered user $i: $username, $base64PublicKey")
@@ -38,9 +40,9 @@ class SimulationController(wsClient: StandaloneWSClient) {
         }
     }
 
-  def generateReadings(usersWithKeys: Seq[UserWithKey])(implicit mat: Materializer): Future[NoResult] =
+  def generateReadings(readingInterval: FiniteDuration, numReadings: Int)(usersWithKeys: Seq[UserWithKey])(implicit mat: Materializer): Future[NoResult] =
     Future.traverse(usersWithKeys) { userWithKey =>
-      new NetMeter(userWithKey, wsClient).startReporting()
+      new NetMeter(userWithKey, wsClient).startReporting(readingInterval, numReadings)
     }.map(_ => NoResult)
 
   private def generateKeyPair(): KeyPair = {
