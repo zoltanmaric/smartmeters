@@ -1,7 +1,7 @@
 package sonnen.utils
 
 import java.security.spec.X509EncodedKeySpec
-import java.security.{KeyFactory, PrivateKey, PublicKey, Signature}
+import java.security._
 import java.util.Base64
 
 
@@ -9,6 +9,7 @@ object CryptoUtils {
 
   private val SignatureImplementation = "SHA256withRSA"
   private val KeyPairImplementation = "RSA"
+  private val KeySize = 1024
 
   def sign(bytes: Array[Byte], privateKey: PrivateKey): String = {
     val signer = Signature.getInstance(SignatureImplementation)
@@ -32,6 +33,13 @@ object CryptoUtils {
 
   def toBase64(publicKey: PublicKey): String =
     toBase64(publicKey.getEncoded)
+
+  def generateKeyPair(): KeyPair = {
+    import java.security.KeyPairGenerator
+    val kpg = KeyPairGenerator.getInstance(KeyPairImplementation)
+    kpg.initialize(KeySize)
+    kpg.genKeyPair()
+  }
 
   private def toBase64(bytes: Array[Byte]): String =
     Base64.getEncoder.encodeToString(bytes)

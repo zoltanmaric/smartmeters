@@ -1,7 +1,6 @@
 package sonnen.clients
 
 import java.security.KeyPair
-import java.util.Base64
 
 import akka.stream.Materializer
 import play.api.libs.json.Json
@@ -9,6 +8,7 @@ import play.api.libs.ws.JsonBodyWritables._
 import play.api.libs.ws.StandaloneWSClient
 import play.shaded.ahc.io.netty.handler.codec.http.HttpResponseStatus
 import sonnen.model.{NoResult, Registration}
+import sonnen.utils.CryptoUtils
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -21,8 +21,8 @@ class SimulationController(wsClient: StandaloneWSClient) {
     Future.traverse(1 to numUsers) { i =>
 
       val username = Random.alphanumeric.take(10).mkString
-      val keyPair = generateKeyPair()
-      val base64PublicKey = Base64.getEncoder.encodeToString(keyPair.getPublic.getEncoded)
+      val keyPair = CryptoUtils.generateKeyPair()
+      val base64PublicKey = CryptoUtils.toBase64(keyPair.getPublic)
       val url = s"http://localhost:9000/register"
       val registration = Registration(username, base64PublicKey)
 
@@ -44,13 +44,6 @@ class SimulationController(wsClient: StandaloneWSClient) {
     Future.traverse(usersWithKeys) { userWithKey =>
       new NetMeter(userWithKey, wsClient).startReporting(readingInterval, numReadings)
     }.map(_ => NoResult)
-
-  private def generateKeyPair(): KeyPair = {
-    import java.security.KeyPairGenerator
-    val kpg = KeyPairGenerator.getInstance("RSA")
-    kpg.initialize(1024)
-    kpg.genKeyPair()
-  }
 
 }
 
