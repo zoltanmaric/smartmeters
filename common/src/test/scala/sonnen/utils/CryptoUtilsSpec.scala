@@ -5,8 +5,8 @@ import org.scalatest.WordSpecLike
 
 class CryptoUtilsSpec extends WordSpecLike with Matchers {
 
-  "CryptoUtilSpec" should {
-    "Sign and verify" in {
+  "CryptoUtils" should {
+    "sign and verify" in {
       val dataToSign = "Some message".getBytes("UTF-8")
 
       val keyPair = CryptoUtils.generateKeyPair()
