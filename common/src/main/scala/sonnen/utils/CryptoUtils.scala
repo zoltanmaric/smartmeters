@@ -35,7 +35,6 @@ object CryptoUtils {
     toBase64(publicKey.getEncoded)
 
   def generateKeyPair(): KeyPair = {
-    import java.security.KeyPairGenerator
     val kpg = KeyPairGenerator.getInstance(KeyPairImplementation)
     kpg.initialize(KeySize)
     kpg.genKeyPair()
