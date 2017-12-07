@@ -11,15 +11,13 @@ class ReadingSimulator() {
 
   private val DELTA_RANGE: Int = 5
 
-  private val inWh: AtomicLong = new AtomicLong()
-  private val outWh: AtomicLong = new AtomicLong()
+  private val netInWh: AtomicLong = new AtomicLong()
 
   def getReading: Reading = {
-    val deltaInWh = getRandomDelta
-    val deltaOutWh = getRandomDelta
+    val deltaInWh = generateRandomDelta()
 
-    Reading(inWh.addAndGet(deltaInWh), outWh.addAndGet(deltaOutWh), Instant.now().toEpochMilli)
+    Reading(netInWh.addAndGet(deltaInWh), Instant.now().toEpochMilli)
   }
 
-  private def getRandomDelta: Long = (((Random.nextGaussian() + 1) / 2) * DELTA_RANGE).toLong
+  private def generateRandomDelta(): Long = (Random.nextGaussian() * DELTA_RANGE).toLong
 }

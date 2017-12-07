@@ -25,7 +25,7 @@ class ReadingServiceSpec extends AsyncWordSpecLike with MockitoSugar with Matche
 
       when(service.dao.publicKeyExists(base64PublicKey)) thenReturn Future.successful(true)
 
-      val reading = Reading(1, 2, Instant.now.toEpochMilli)
+      val reading = Reading(1, Instant.now.toEpochMilli)
 
       val signedReading = Signer.sign(reading, keyPair)
 
@@ -41,7 +41,7 @@ class ReadingServiceSpec extends AsyncWordSpecLike with MockitoSugar with Matche
       // Mock DAO says this is not a known public key
       when(service.dao.publicKeyExists(base64PublicKey)) thenReturn Future.successful(false)
 
-      val reading = Reading(1, 2, Instant.now.toEpochMilli)
+      val reading = Reading(1, Instant.now.toEpochMilli)
 
       val signedReading = Signer.sign(reading, keyPair)
 
@@ -56,7 +56,7 @@ class ReadingServiceSpec extends AsyncWordSpecLike with MockitoSugar with Matche
 
       when(service.dao.publicKeyExists(base64PublicKey)) thenReturn Future.successful(true)
 
-      val reading = Reading(1, 2, Instant.now.toEpochMilli)
+      val reading = Reading(1, Instant.now.toEpochMilli)
 
       val signedReading = Signer.sign(reading, keyPair)
 
@@ -77,12 +77,12 @@ class ReadingServiceSpec extends AsyncWordSpecLike with MockitoSugar with Matche
 
       when(service.dao.publicKeyExists(base64PublicKey)) thenReturn Future.successful(true)
 
-      val reading = Reading(1, 2, Instant.now.toEpochMilli)
+      val reading = Reading(1, Instant.now.toEpochMilli)
 
       val signedReading = Signer.sign(reading, keyPair)
 
       // Replace reading in SignedReading
-      val tamperedSignedReading = signedReading.copy(reading = Reading(1000, 1000, reading.timestamp))
+      val tamperedSignedReading = signedReading.copy(reading = Reading(1000, reading.timestamp))
 
       service.verifyReading(tamperedSignedReading).map(_ shouldBe a[VerificationFailure])
     }

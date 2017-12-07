@@ -12,7 +12,7 @@ consumption of energy of a consumer in real-time (e.g. every
 ### Server
 * Collects periodical net meter readings via a JSON REST API
 * Each reading consists of
-  * The net status of the smart meter (Wh in, Wh out)
+  * The net status of the smart meter (energy in - energy out \[Wh\])
   * The timestamp of the reading
   * The public key of the meter
   * The cryptographic signature over the status and the timestamp
@@ -51,7 +51,7 @@ key
   registered user's public key because they will not be able to
   sign the message without the user's private key
   * The current implementation uses HTTP, not HTTPS, meaning
-  adversaries could read the contents of each message. However,
+  adversaries _could_ read the contents of each message. However,
   using HTTPS would prevent them from doing so, and implementing
   it would be a mere matter of configuration and installation of
   an SSL certificate
@@ -112,7 +112,8 @@ run
 `(Server started, use Enter to stop and go back to the console...)`
 message in the console), open http://localhost:9000 in a browser
    * On first run, there will be an error page saying that
-   evolutions need to be applied. Press the `Apply` button. This
+   evolutions need to be applied. Press the `Apply this script
+   now!` button. This
    will create the necessary database tables
    * You should now see the standard Play Framework welcome page
 7. Start another SBT session in another terminal

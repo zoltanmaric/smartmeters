@@ -1,19 +1,15 @@
 package sonnen.utils
 
 import java.nio.ByteBuffer
-import java.security.{KeyPair, PublicKey, Signature}
-import java.security.KeyFactory
-import java.security.spec.X509EncodedKeySpec
-import java.util.Base64
+import java.security.KeyPair
 
 import sonnen.model.{Reading, SignedReading}
 
 object Signer {
-  private val inWhLength = 8
-  private val outWhLength = 8
+  private val netInWhLength = 8
   private val timestampLength = 8
 
-  private val totalLength = inWhLength + outWhLength + timestampLength
+  private val totalLength = netInWhLength + timestampLength
 
   def sign(reading: Reading, keyPair: KeyPair): SignedReading = {
     val dataToSign = toByteArray(reading)
@@ -32,8 +28,7 @@ object Signer {
 
   private def toByteArray(reading: Reading): Array[Byte] = {
     val bb = ByteBuffer.allocate(totalLength)
-    bb.putLong(reading.inWh)
-    bb.putLong(reading.outWh)
+    bb.putLong(reading.netInWh)
     bb.putLong(reading.timestamp)
     bb.array()
   }
