@@ -50,6 +50,11 @@ key
   * Adversaries will not be able to submit readings with a
   registered user's public key because they will not be able to
   sign the message without the user's private key
+  * The current implementation uses HTTP, not HTTPS, meaning
+  adversaries could read the contents of each message. However,
+  using HTTPS would prevent them from doing so, and implementing
+  it would be a mere matter of configuration and installation of
+  an SSL certificate
   
 #### Clients Simulator
 * A console application for simulating a swarm of smart meters
@@ -73,7 +78,7 @@ key
 #### Requirements
 * JDK (implemented with version 8)
 * [SBT](http://www.scala-sbt.org/download.html) (implemented with version 1.0.4)
-* [PostgreSQL](https://www.postgresql.org/download/) (implemented with version 9.6.6)
+* [PostgreSQL](https://www.postgresql.org/download) (implemented with version 9.6.6)
 
 #### Installation Steps
 ##### Configuring PostgreSQL
