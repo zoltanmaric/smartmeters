@@ -10,9 +10,12 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-
+/** The main entry point of the clients simulator. */
 object Main {
 
+  /**
+    * All arguments are ignored. Parameters can be configured in reference.conf instead.
+    */
   def main(args: Array[String]): Unit = {
     val simulation = ResourcesUtil.withMaterializer { implicit mat: Materializer =>
       ResourcesUtil.withWsClient { wsClient =>

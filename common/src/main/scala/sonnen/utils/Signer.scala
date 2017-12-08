@@ -5,12 +5,21 @@ import java.security.KeyPair
 
 import sonnen.model.{Reading, SignedReading}
 
+/**
+  * A utility object for signing readings and verifying signatures
+  */
 object Signer {
   private val netInWhLength = 8
   private val timestampLength = 8
 
   private val totalLength = netInWhLength + timestampLength
 
+  /**
+    * Signs the provided reading
+    * @param reading the reading to sign
+    * @param keyPair the key pair to use for signing
+    * @return an object containing the reading, the signature and the public key
+    */
   def sign(reading: Reading, keyPair: KeyPair): SignedReading = {
     val dataToSign = toByteArray(reading)
 
@@ -20,6 +29,11 @@ object Signer {
     SignedReading(base64PublicKey, base64Signature, reading)
   }
 
+  /**
+    * Verifies the signature in a signed reading
+    * @param signedReading the signed reading to verify
+    * @return true if the signature is valid, false otherwise
+    */
   def verifySignature(signedReading: SignedReading): Boolean = {
     val dataToSign = toByteArray(signedReading.reading)
 
