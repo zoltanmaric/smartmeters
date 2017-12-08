@@ -17,7 +17,12 @@ class RegistrationController @Inject()(
                                       )(implicit ec: ExecutionContext)
   extends AbstractController(cc) {
 
-  // TODO: restrict access
+  /**
+    * Writes the provided username and public key into the database.
+    * Access to this endpoint is assumed to be restricted to operators within a private network.
+    *
+    * @return 201 CREATED on success, 500 otherwise
+    */
   def register(): Action[Registration] = Action.async(parse.json[Registration]) { request =>
     val Registration(username, publicKey) = request.body
     val res = dao.register(username, publicKey)

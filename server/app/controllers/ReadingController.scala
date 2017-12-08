@@ -16,6 +16,14 @@ class ReadingController @Inject()(
                                  )(implicit ec: ExecutionContext)
   extends AbstractController(cc) {
 
+  /**
+    * Verifies the signature on the provided reading, checks whether the public key belongs to a registered user, and
+    * stores the reading into the database, along with the signature and a link to the owner.
+    * @return 201 CREATED on success
+    *         403 FORBIDDEN if the provided public key does not belong to a registered user
+    *         400 BAD REQUEST if the signature verification fails
+    *
+    */
   def reportReading(): Action[SignedReading] = Action.async(parse.json[SignedReading]) { request =>
     val reading = request.body
 
@@ -23,7 +31,7 @@ class ReadingController @Inject()(
 
     readingService.verifyReading(reading).flatMap {
       case VerificationSuccess =>
-        readingService.storeReading(reading).map(_ => Ok)
+        readingService.storeReading(reading).map(_ => Created)
       case UnknownPublicKey =>
         Future.successful(Forbidden(s"Unknown public key ${reading.base64PublicKey} in $reading"))
       case InvalidSignature =>
